@@ -135,3 +135,23 @@ func TestAdjustTimeoutExponential(t *testing.T) {
 		fmt.Println(adjusted)
 	}
 }
+
+func TestAdjustTimeoutNormalized(t *testing.T) {
+
+	timeout := NewDynamicTimeout(time.Minute)
+
+	rand.Seed(time.Now().UTC().UnixNano())
+
+	initial := timeout.Timeout()
+	fmt.Println(initial)
+
+	for try := 0; try < 10; try++ {
+
+		testAdjustTimeout(t, timeout, func() float64 {
+			return 1.0 + rand.NormFloat64()
+		})
+
+		adjusted := timeout.Timeout()
+		fmt.Println(adjusted)
+	}
+}
