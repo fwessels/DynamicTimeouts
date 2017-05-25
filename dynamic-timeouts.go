@@ -77,7 +77,9 @@ func (dt *DynamicTimout) adjust(entries int) {
 		atomic.StoreInt64(&dt.timeout, timeout)
 	}
 
-	copy
+	// TODO: Consider 'rolling' update?
+	// copy(dt.log[:DynTimeOutLogSize/2],dt.log[DynTimeOutLogSize/2:])
+	
 	// reset log entries
 	atomic.StoreInt64(&dt.entries, 0)
 }
