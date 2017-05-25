@@ -80,3 +80,22 @@ func TestDualDecreaseTimeout(t *testing.T) {
 	adjustedAgain := timeout.Timeout()
 	fmt.Println(adjustedAgain)
 }
+
+func TestInfiniteDecreaseTimeout(t *testing.T) {
+
+	timeout := NewDynamicTimeout(time.Minute)
+
+	initial := timeout.Timeout()
+	fmt.Println(initial)
+
+	for l := 0; l < 100; l++ {
+		for i := 0; i < DynTimeOutLogSize; i++ {
+			timeout.LogSuccess(20 * time.Second)
+		}
+
+		adjusted := timeout.Timeout()
+		if l == 99 {
+			fmt.Println(adjusted)
+		}
+	}
+}
