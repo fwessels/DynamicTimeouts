@@ -99,3 +99,39 @@ func TestInfiniteDecreaseTimeout(t *testing.T) {
 		}
 	}
 }
+
+func testAdjustTimeout(t *testing.T, timeout *DynamicTimout, f func() float64) {
+
+	for i := 0; i < DynTimeOutLogSize; i++ {
+
+		rnd := f()
+		duration := time.Duration(float64(20 * time.Second) * rnd)
+
+		if duration < 100 * time.Millisecond {
+			duration = 100 * time.Millisecond
+		}
+		if duration >= time.Minute {
+			timeout.LogFailure()
+		} else {
+			timeout.LogSuccess(duration)
+		}
+	}
+}
+
+func TestAdjustTimeoutExponential(t *testing.T) {
+
+	timeout := NewDynamicTimeout(time.Minute)
+
+	rand.Seed(time.Now().UTC().UnixNano())
+
+	initial := timeout.Timeout()
+	fmt.Println(initial)
+
+	for try := 0; try < 10; try++ {
+
+		testAdjustTimeout(t, timeout, rand.ExpFloat64)
+
+		adjusted := timeout.Timeout()
+		fmt.Println(adjusted)
+	}
+}
